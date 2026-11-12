@@ -4,6 +4,16 @@ Production-ready geospatial monitoring and fleet management system built with a 
 
 ---
 
+## Live Deployment & Docker Hub Links
+
+- **Live Web Application**: [http://34.121.116.232:5173](http://34.121.116.232:5173) *(Hosted on Google Cloud Platform)*
+- **Live Backend API**: [http://34.121.116.232:8080/health](http://34.121.116.232:8080/health)
+- **Docker Hub Images**:
+  - Backend API: [`nishanthprabhu123/geofencing-api:latest`](https://hub.docker.com/r/nishanthprabhu123/geofencing-api)
+  - Frontend UI: [`nishanthprabhu123/geofencing-frontend:latest`](https://hub.docker.com/r/nishanthprabhu123/geofencing-frontend)
+
+---
+
 ## 1. Architecture Overview
 
 - **Backend**: Go 1.24, Chi v5 router, PostGIS spatial queries, Redis telemetry state cache, Chi CORS & timing middleware.
