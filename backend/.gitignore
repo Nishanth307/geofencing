@@ -1,0 +1,23 @@
+# Environment files
+.env
+.env.*
+!.env.example
+app.env
+*.env
+
+# Binaries & build artifacts
+bin/
+tmp/
+server
+*.exe
+*.test
+*.out
+cover.out
+
+# OS & IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.log
+

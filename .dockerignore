@@ -1,0 +1,33 @@
+# Version control
+.git
+.gitignore
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+app.env
+*.env
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# IDE and Editor files
+.idea/
+.vscode/
+
+# Build artifacts and dependency directories
+node_modules/
+dist/
+build/
+bin/
+tmp/
+*.log
+
+# Docker volume mounts
+postgres_data/
+redis_data/
+caddy_data/
+caddy_config/
+

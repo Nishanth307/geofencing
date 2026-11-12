@@ -1,0 +1,84 @@
+services:
+  # Automatically copies .env.example to .env if .env does not exist
+  init-env:
+    image: alpine:latest
+    container_name: geofence_init_env
+    restart: "no"
+    volumes:
+      - ./:/app
+    command: sh -c "test -f /app/.env || cp /app/.env.example /app/.env"
+
+  postgres:
+    image: postgis/postgis:15-3.4
+    container_name: geofence_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-geofencing}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-geofencing_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-geofencing}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-geofencing} -d ${POSTGRES_DB:-geofencing}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: geofence_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: geofence_api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-geofencing}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-geofencing_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-geofencing}
+      POSTGRES_SSLMODE: disable
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_DB: ${REDIS_DB:-0}
+    depends_on:
+      init-env:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: geofence_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:

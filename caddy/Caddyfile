@@ -1,0 +1,17 @@
+{
+    auto_https off
+}
+
+:80 {
+    # WebSocket and API reverse proxy to backend
+    reverse_proxy /ws api:8080
+    reverse_proxy /geofences* api:8080
+    reverse_proxy /vehicles* api:8080
+    reverse_proxy /locations* api:8080
+    reverse_proxy /alerts* api:8080
+    reverse_proxy /health api:8080
+
+    # Default fallback
+    reverse_proxy api:8080
+}
+
