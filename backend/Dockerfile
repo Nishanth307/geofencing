@@ -1,27 +1,13 @@
-# Stage 1: Build binary
-FROM golang:1.24-alpine AS builder
+# Production runtime image with precompiled binary
+FROM alpine:3.20
+
+RUN apk --no-cache add ca-certificates tzdata
 
 WORKDIR /app
 
-# Download dependencies
-COPY go.mod go.sum ./
-RUN go mod download
-
-# Copy source code
-COPY . .
-
-# Compile optimized static binary
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o /app/server ./cmd/app/main.go
-
-# Stage 2: Minimal Distroless runtime
-FROM gcr.io/distroless/static-debian12:nonroot
-
-WORKDIR /
-
-COPY --from=builder /app/server /server
+# Copy pre-compiled static Linux amd64 binary
+COPY bin/server /app/server
 
 EXPOSE 8080
 
-USER nonroot:nonroot
-
-ENTRYPOINT ["/server"]
+ENTRYPOINT ["/app/server"]

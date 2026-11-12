@@ -5,11 +5,8 @@
 !.env.example
 app.env
 *.env
-bin/
 tmp/
-server
 *.log
 .DS_Store
 .idea/
 .vscode/
-
